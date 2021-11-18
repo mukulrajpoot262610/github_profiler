@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import RepoCover from '../../components/RepoCover'
+import FollowerCover from '../../components/FollowerCover'
 
 const Dashboard = () => {
 
@@ -10,11 +11,12 @@ const Dashboard = () => {
     const [repoData, setRepoData] = useState();
     const [followerData, setFollowerData] = useState();
     const [followingData, setFollowingData] = useState();
-    const [current, setCurrent] = useState();
+    const [current, setCurrent] = useState("Top Repos");
+    const [error, setError] = useState("Loading...");
 
     const username = router.query.username;
 
-    console.log(userData)
+    console.log("USER", userData)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,7 +29,12 @@ const Dashboard = () => {
 
             const data = await res.json()
 
-            setUserData(data)
+            if (res.status === 403) {
+                setError(data.message.split(".")[0])
+            } else {
+                setUserData(data)
+            }
+
         }
 
         username && fetchData()
@@ -112,7 +119,7 @@ const Dashboard = () => {
                                 </div>
 
                                 <div class="w-full lg:w-6/12 my-6 shadow flex flex-col lg:flex-row">
-                                    <div class="stat" onClick={() => setCurrent("Repos")}>
+                                    <div class="stat" onClick={() => setCurrent("Top Repos")}>
                                         <div class="stat-figure text-primary">
                                             <img src="/repo.svg" alt="" height={40} width={40} />
                                         </div>
@@ -144,15 +151,21 @@ const Dashboard = () => {
                             <div className="bg-white min-h-screen flex items-start justify-center w-full p-4 pt-12">
                                 <div className="container">
                                     <h1 className="text-black font-semibold text-2xl">Showing: {current}</h1>
-                                    <div className="flex flex-wrap justify-center">
+                                    <div className="my-6 flex flex-wrap justify-center">
                                         {
-                                            repoData ? repoData.sort((a, b) => b.stargazers_count - a.stargazers_count).filter((e, index) => index < 6).map((e) => <RepoCover data={e} />) : "Loading..."
+                                            repoData ? repoData?.sort((a, b) => b.stargazers_count - a.stargazers_count).filter((e, index) => index < 6).map((e) => <RepoCover data={e} />) : "Loading..."
+                                        }
+                                    </div>
+
+                                    <div className="my-6 flex flex-wrap justify-center">
+                                        {
+                                            followerData ? followerData.map((e) => <FollowerCover data={e} />) : "Loading..."
                                         }
                                     </div>
                                 </div>
                             </div>
                         </>
-                    ) : "Loading..."
+                    ) : error
                 }
             </main>
 

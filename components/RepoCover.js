@@ -5,7 +5,7 @@ const RepoCover = ({ data }) => {
     const { name, language, stargazers_count, html_url, homepage } = data
 
     return (
-        <div class="card bordered shadow w-96 m-2 pb-2 px-3">
+        <div class="border-2 rounded-xl w-96 m-2 pb-2 px-3">
             <div class="card-body">
                 <h2 className="text-black card-title">{name}
                 </h2>
