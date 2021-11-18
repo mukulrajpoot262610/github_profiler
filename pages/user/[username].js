@@ -74,7 +74,13 @@ const Dashboard = () => {
                                         <div class="stat-value">{userData.following}</div>
                                     </div>
                                 </div>
+                                <div className="flex justify-evenly items-center">
+                                    <a href={`https://twitter.com/${userData.twitter_username}`} target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
+                                    <a href={userData.html_url} className="my-2 mx-6" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+                                    <a href={userData.blog} target="_blank"><i class="fas fa-link"></i> Website</a>
+                                </div>
                             </div>
+
                             <div className="bg-white min-h-screen w-full">
 
                             </div>
@@ -83,7 +89,7 @@ const Dashboard = () => {
                 }
             </main>
 
-        </div>
+        </div >
     )
 }
 
