@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import RepoCover from '../../components/RepoCover'
 
 const Dashboard = () => {
 
     const router = useRouter()
     const [userData, setUserData] = useState();
+    const [repoData, setRepoData] = useState();
+    const [followerData, setFollowerData] = useState();
+    const [followingData, setFollowingData] = useState();
+    const [current, setCurrent] = useState();
 
     const username = router.query.username;
 
@@ -27,6 +32,61 @@ const Dashboard = () => {
 
         username && fetchData()
     }, [username])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch(`https://api.github.com/users/${username}/repos`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+
+            const data = await res.json()
+
+            setRepoData(data)
+        }
+
+        username && fetchData()
+    }, [username])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch(`https://api.github.com/users/${username}/following`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+
+            const data = await res.json()
+
+            setFollowingData(data)
+        }
+
+        username && fetchData()
+    }, [username])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const res = await fetch(`https://api.github.com/users/${username}/followers`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+
+            const data = await res.json()
+
+            setFollowerData(data)
+        }
+
+        username && fetchData()
+    }, [username])
+
+    console.log(repoData)
+    console.log(followerData)
+    console.log(followingData)
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
@@ -52,21 +112,21 @@ const Dashboard = () => {
                                 </div>
 
                                 <div class="w-full lg:w-6/12 my-6 shadow flex flex-col lg:flex-row">
-                                    <div class="stat">
+                                    <div class="stat" onClick={() => setCurrent("Repos")}>
                                         <div class="stat-figure text-primary">
                                             <img src="/repo.svg" alt="" height={40} width={40} />
                                         </div>
                                         <div class="stat-title">Total Repo</div>
                                         <div class="stat-value text-primary">{userData.public_repos}</div>
                                     </div>
-                                    <div class="stat">
+                                    <div class="stat" onClick={() => setCurrent("Followers")}>
                                         <div class="stat-figure text-info">
                                             <img src="/following.svg" alt="" height={40} width={40} />
                                         </div>
                                         <div class="stat-title">Followers</div>
                                         <div class="stat-value text-info">{userData.followers}</div>
                                     </div>
-                                    <div class="stat">
+                                    <div class="stat" onClick={() => setCurrent("Following")}>
                                         <div class="stat-figure text-info">
                                             <img src="/followers.svg" alt="" height={40} width={40} />
                                         </div>
@@ -81,15 +141,22 @@ const Dashboard = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-white min-h-screen w-full">
-
+                            <div className="bg-white min-h-screen flex items-start justify-center w-full p-4 pt-12">
+                                <div className="container">
+                                    <h1 className="text-black font-semibold text-2xl">Showing: {current}</h1>
+                                    <div className="flex flex-wrap justify-center">
+                                        {
+                                            repoData ? repoData.sort((a, b) => b.stargazers_count - a.stargazers_count).filter((e, index) => index < 6).map((e) => <RepoCover data={e} />) : "Loading..."
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </>
                     ) : "Loading..."
                 }
             </main>
 
-        </div >
+        </div>
     )
 }
 
