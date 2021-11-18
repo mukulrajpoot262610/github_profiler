@@ -1,82 +1,42 @@
 import Head from 'next/head'
+import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 export default function Home() {
+
+  const router = useRouter()
+  const [username, setUsername] = useState()
+
+
+  const onFinish = async (e) => {
+    e.preventDefault()
+    console.log('Received values of form: ', username);
+    router.push(`/user/${username}`)
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+    <div className="flex flex-col items-center justify-center min-h-screen">
       <Head>
-        <title>Create Next App</title>
+        <title>DEV Profiler</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex flex-col items-center justify-center w-full flex-1 px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="p-3 font-mono text-lg bg-gray-100 rounded-md">
-            pages/index.js
-          </code>
-        </p>
-
-        <div className="flex flex-wrap items-center justify-around max-w-4xl mt-6 sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="p-6 mt-6 text-left border w-96 rounded-xl hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      <main className="relative h-screen w-full flex justify-center items-center flex-col">
+        <div className="w-full flex justify-center items-center flex-col">
+          <img src="/github.svg" alt="" height={200} width={200} />
+          <h1 className="my-6 font-bold text-2xl">Find your DEV Profile</h1>
+          <form onSubmit={onFinish} className="form-control">
+            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="github username" className="input sm:input-lg input-success input-bordered w-72 sm:w-96" />
+          </form>
         </div>
+        {/* <div className="absolute bottom-0 right-0 h-16 w-16 bg-green rounded-2xl flex justify-center items-center">
+          <img src="/github_gray.svg" alt="" height={50} width={50} />
+        </div> */}
+        <footer className="flex flex-col justify-center items-center absolute bottom-0 my-6">
+          <p>Built using Nextjs, GitHub REST Api and tailwindCSS</p>
+        </footer>
       </main>
 
-      <footer className="flex items-center justify-center w-full h-24 border-t">
-        <a
-          className="flex items-center justify-center"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className="h-4 ml-2" />
-        </a>
-      </footer>
     </div>
   )
 }
