@@ -7,6 +7,9 @@ module.exports = {
       colors: {
         green: "#87D039",
       },
+      height: {
+        500: '50vh'
+      }
     },
   },
   variants: {
