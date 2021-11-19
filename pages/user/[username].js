@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import RepoCover from '../../components/RepoCover'
-import FollowerCover from '../../components/FollowerCover'
 import Link from 'next/link'
 
 const Dashboard = () => {
@@ -16,8 +15,6 @@ const Dashboard = () => {
 
     const username = router.query.username;
 
-    console.log("USER", userData)
-
     useEffect(() => {
         const fetchData = async () => {
             const res = await fetch(`https://api.github.com/users/${username}`, {
@@ -29,7 +26,7 @@ const Dashboard = () => {
 
             const data = await res.json()
 
-            if (res.status === 403) {
+            if (res.status === 403 || res.status === 404) {
                 setError(data.message.split(".")[0])
             } else {
                 setUserData(data)
@@ -50,8 +47,11 @@ const Dashboard = () => {
             })
 
             const data = await res.json()
-
-            setRepoData(data)
+            if (res.status === 403 || res.status === 404) {
+                setError(data.message.split(".")[0])
+            } else {
+                setRepoData(data)
+            }
         }
 
         username && fetchData()
@@ -73,7 +73,10 @@ const Dashboard = () => {
 
         username && fetchData()
     }, [username])
-
+    
+   console.log(repoData)
+   console.log(userData)
+    
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <Head>
@@ -86,52 +89,52 @@ const Dashboard = () => {
                     userData ? (
                         <>
                         <div className="absolute top-0 left-0 p-4">
-                            <h1 className="text-2xl">{request.limit}/{request.remaining}</h1>
+                            <h1 className="text-2xl">{request?.limit}/{request?.remaining}</h1>
                             <h1 className="uppercase">Request Left</h1>
                         </div>
                             <div className="p-4 w-full container flex flex-col justify-center items-center">
                                 <img src={userData.avatar_url} alt="" className="rounded-full mt-12 h-56 bg-green p-2" />
-                                <div data-tip={userData.bio} class="tooltip">
+                                <div data-tip={userData.bio} className="tooltip">
                                     <h1 className="mt-6 text-6xl text-center">{userData.name}</h1>
                                 </div>
                                 <h1 className="my-2 text-3xl text-green">@{userData.login}</h1>
 
                                 <div className="flex items-center">
-                                    <i class="fas fa-map-marker-alt"></i>
+                                    <i className="fas fa-map-marker-alt"></i>
                                     <h1 className="ml-2 text-xl">{userData.location}</h1>
                                 </div>
 
-                                <div class="w-full lg:w-6/12 my-6 shadow flex flex-col lg:flex-row">
-                                    <div class="stat" onClick={() => setCurrent("Top Repos")}>
-                                        <div class="stat-figure text-primary">
+                                <div className="w-full lg:w-6/12 my-6 shadow flex flex-col lg:flex-row">
+                                    <div className="stat" onClick={() => setCurrent("Top Repos")}>
+                                        <div className="stat-figure text-primary">
                                             <img src="/repo.svg" alt="" height={40} width={40} />
                                         </div>
-                                        <div class="stat-title">Total Repo</div>
-                                        <div class="stat-value text-primary">{userData.public_repos}</div>
+                                        <div className="stat-title">Total Repo</div>
+                                        <div className="stat-value text-primary">{userData.public_repos}</div>
                                     </div>
                                     <Link href={`/user/${username}/follow`}>
-                                    <div class="stat" onClick={() => setCurrent("Followers")}>
-                                        <div class="stat-figure text-info">
+                                    <div className="stat" onClick={() => setCurrent("Followers")}>
+                                        <div className="stat-figure text-info">
                                             <img src="/following.svg" alt="" height={40} width={40} />
                                         </div>
-                                        <div class="stat-title">Followers</div>
-                                        <div class="stat-value text-info">{userData.followers}</div>
+                                        <div className="stat-title">Followers</div>
+                                        <div className="stat-value text-info">{userData.followers}</div>
                                     </div>
                                     </Link>
                                     <Link href={`/user/${username}/following`}>
-                                    <div class="stat" onClick={() => setCurrent("Following")}>
-                                        <div class="stat-figure text-info">
+                                    <div className="stat" onClick={() => setCurrent("Following")}>
+                                        <div className="stat-figure text-info">
                                             <img src="/followers.svg" alt="" height={40} width={40} />
                                         </div>
-                                        <div class="stat-title">Following</div>
-                                        <div class="stat-value">{userData.following}</div>
+                                        <div className="stat-title">Following</div>
+                                        <div className="stat-value">{userData.following}</div>
                                     </div>
                                     </Link>
                                 </div>
                                 <div className="flex justify-evenly items-center">
-                                    <a href={`https://twitter.com/${userData.twitter_username}`} target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-                                    <a href={userData.html_url} className="my-2 mx-6" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-                                    <a href={userData.blog} target="_blank"><i class="fas fa-link"></i> Website</a>
+                                    <a href={`https://twitter.com/${userData.twitter_username}`} target="_blank"><i className="fab fa-twitter"></i> Twitter</a>
+                                    <a href={userData.html_url} className="my-2 mx-6" target="_blank"><i className="fab fa-github"></i> GitHub</a>
+                                    <a href={userData.blog} target="_blank"><i className="fas fa-link"></i> Website</a>
                                 </div>
                             </div>
 
@@ -140,7 +143,7 @@ const Dashboard = () => {
                                     <h1 className="text-black font-semibold text-2xl">Showing: {current}</h1>
                                     <div className="my-6 flex flex-wrap justify-center">
                                         {
-                                            repoData ? repoData?.sort((a, b) => b.stargazers_count - a.stargazers_count).filter((e, index) => index < 6).map((e) => <RepoCover data={e} />) : "Loading..."
+                                            repoData ? repoData?.sort((a, b) => b.stargazers_count - a.stargazers_count).filter((e, index) => index < 6).map((e, index) => <RepoCover key={index} data={e} />) : "Loading..."
                                         }
                                     </div>
                                 </div>

@@ -22,10 +22,13 @@ const Follow = () => {
 
             const data = await res.json()
 
-            if (res.status === 403) {
+            if (res.status === 403 || res.status === 404) {
                 setError(data.message.split(".")[0])
             } else {
                 setFollowerData(data)
+                if (data.length === 0) {
+                    setError("No Followers")
+                }
             }
         }
 
@@ -33,7 +36,7 @@ const Follow = () => {
     }, [username])
     
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center justify-start min-h-screen">
             <Head>
                 <title>DEV | {username} Follower</title>
                 <link rel="icon" href="/favicon.ico" />
@@ -42,10 +45,10 @@ const Follow = () => {
             <main className="relative w-full flex justify-center items-center flex-col">
                 <h1 className="my-6 text-2xl"><span className="text-green" >@{username}</span> Followers</h1>
                 {
-                    followerData ? (
+                    followerData?.length > 0 ? (
                         <div className="p-4 flex flex-wrap">
                         {
-                            followerData?.map((e) => <FollowerCover data={e} />)
+                            followerData?.map((e, index) => <FollowerCover key={index} data={e} />)
                         }
                         </div>
                     ) : error
