@@ -34,6 +34,7 @@ export default function Home() {
         </div> */}
         <footer className="flex flex-col justify-center items-center absolute bottom-0 my-6">
           <p>Built using Nextjs, GitHub REST Api and tailwindCSS</p>
+        <h1>Give it a ⭐ <a target="_blank" className="underline text-blue-500" href="https://github.com/mukulrajpoot262610/github_profiler">here</a></h1>
         </footer>
       </main>
 
