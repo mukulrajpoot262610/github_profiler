@@ -74,8 +74,6 @@ const Dashboard = () => {
         username && fetchData()
     }, [username])
 
-    console.log(request)
-
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
             <Head>

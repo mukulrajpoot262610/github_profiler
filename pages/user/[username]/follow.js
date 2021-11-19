@@ -7,6 +7,7 @@ const Follow = () => {
 
     const router = useRouter()
     const [followerData, setFollowerData] = useState();
+    const [error, setError] = useState("Loading...");
 
     const username = router.query.username;
     
@@ -21,14 +22,15 @@ const Follow = () => {
 
             const data = await res.json()
 
-            setFollowerData(data)
+            if (res.status === 403) {
+                setError(data.message.split(".")[0])
+            } else {
+                setFollowerData(data)
+            }
         }
 
         username && fetchData()
     }, [username])
-
-   console.log(username)
-   console.log(followerData)
     
     return (
         <div className="flex flex-col items-center justify-center min-h-screen">
@@ -46,7 +48,7 @@ const Follow = () => {
                             followerData?.map((e) => <FollowerCover data={e} />)
                         }
                         </div>
-                    ) : "Loading..."
+                    ) : error
                 }
             </main>
             
